@@ -328,7 +328,62 @@ class WebServer {
               builder.append("Height is invalid, please enter a valid double.");
             }
           }
-        } else {
+        } else if (request.contains("sentence?")) {
+          String noun1 = null;
+          String noun2 = null;
+          Map<String, String> query_pairs = new LinkedHashMap<String, String>();
+          // extract path parameters
+          query_pairs = splitQuery(request.replace("sentence?", ""));
+
+          String[] upper_determiner = {"The", "A", "Some"};
+          String[] adjective = {"old", "smelly", "cute", "hyper", "sad", "happy"};
+          String[] determiner = {"the", "a", "some"};
+          String[] verb = {"chased", "hit", "ran", "pushed", "tackled"};
+
+          int randomUDet = (int) (Math.random() * upper_determiner.length);
+          int randomAdj = (int) (Math.random() * adjective.length);
+          int randomDet = (int) (Math.random() * determiner.length);
+          int randomVerb = (int) (Math.random() * verb.length);
+
+          String useUDet = upper_determiner[randomUDet];
+          String useAdj = adjective[randomAdj];
+          String useDet = determiner[randomDet];
+          String useVerb = verb[randomVerb];
+
+          try {
+            noun1 = query_pairs.get("noun1");
+            noun2 = query_pairs.get("noun2");
+            if ((noun1.matches("[a-zA-Z]+")) && (noun2.matches("[a-zA-Z]+"))) {
+              String sentence = useUDet + " " + useAdj + " " + noun1 + " " + useVerb + " " + useDet + " " + useAdj + " " + noun2 + ".";
+              builder.append("HTTP/1.1 200 OK\n");
+              builder.append("Content-Type: text/html; charset=utf-8\n");
+              builder.append("\n");
+              builder.append(sentence);
+            } else {
+              if (!(noun1.matches("[a-zA-Z]+")) && !(noun2.matches("[a-zA-Z]+"))) {
+                builder.append("HTTP/1.1 405 Method Not Allowed\n");
+                builder.append("Content-Type: text/html; charset=utf-8\n");
+                builder.append("\n");
+                builder.append("Invalid inputs for noun1 and noun2");
+              } else if (!(noun1.matches("[a-zA-Z]+"))) {
+                builder.append("HTTP/1.1 405 Method Not Allowed\n");
+                builder.append("Content-Type: text/html; charset=utf-8\n");
+                builder.append("\n");
+                builder.append("Invalid input for noun1, enter a valid input");
+              } else {
+                builder.append("HTTP/1.1 405 Method Not Allowed\n");
+                builder.append("Content-Type: text/html; charset=utf-8\n");
+                builder.append("\n");
+                builder.append("Invalid input for noun2, enter a valid input");
+              }
+            }
+          } catch (Exception e) {
+            builder.append("HTTP/1.1 405 Method Not Allowed\n");
+            builder.append("Content-Type: text/html; charset=utf-8\n");
+            builder.append("\n");
+            builder.append("Detected invalid input..., make sure you include noun1 and noun2");
+          }
+        }else {
           // if the request is not recognized at all
 
           builder.append("HTTP/1.1 400 Bad Request\n");
