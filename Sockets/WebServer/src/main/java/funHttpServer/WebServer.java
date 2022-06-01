@@ -243,16 +243,16 @@ class WebServer {
             JSONArray repoArray = new JSONArray(json);
 
             JSONArray newjSON = new JSONArray();
-            String repoName = null;
-            String ownername = null;
-            String repo_id = null;
+            String repoName;
+            String ownername;
+            String repoId;
             for (int i = 0; i < repoArray.length(); i++) {
               JSONObject repo = repoArray.getJSONObject(i);
 
               repoName = repo.getString("full_name");
-              repo_id = repo.getString("node_id");
+              repoId = repo.getString("id");
               System.out.println(repoName);
-              System.out.println(repo_id);
+              System.out.println(repoId);
 
               JSONObject owner = repo.getJSONObject("owner");
               ownername = owner.getString("login");
@@ -261,29 +261,21 @@ class WebServer {
               JSONObject newRepo = new JSONObject();
               newRepo.put("full_name", repoName);
               newRepo.put("owner", ownername);
-              newRepo.put("node_id", repo_id);
+              newRepo.put("id", repoId);
               newjSON.put(newRepo);
               builder.append("Repo Name: " + repoName + "\n");
-              builder.append("Repo Node ID: " + repo_id + "\n");
+              builder.append("Repo ID: " + repoId + "\n");
               builder.append("Owner Name: " + ownername + "\n");
 
               builder.append("\n");
             }
-            }
-          catch (Exception e) {
+          } catch (Exception e) {
             if (query_pairs.containsKey("query")){
               builder.append("HTTP/1.1 405\n");
               builder.append("Content-Type: text/html; charset=utf-8\n");
               builder.append("\n");
               builder.append("The input is wrong...");
-            }
-            else if (query_pairs.containsValue(null)){
-              builder.append("HTTP/1.1 405\n");
-              builder.append("Content-Type: text/html; charset=utf-8\n");
-              builder.append("\n");
-              builder.append("The input is wrong...");
-            }
-            else {
+            } else {
               builder.append("HTTP/1.1 404 Not Found\n");
               builder.append("Content-Type: text/html; charset=utf-8\n");
               builder.append("\n");
