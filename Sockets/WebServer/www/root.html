@@ -3,11 +3,21 @@
 		<link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
 	</head>
 	<body>
-		<h3>You can make the following GET requests<h3>
+		<h3>You can make the following GET requests:<h3>
 		<ul>
-			<li>/file/sample.html -- returns the content of the file sample.html</li>
-			<li>/json -- returns a json of the /random request</a></li>
-			<li>/random -- returns index.html</a></li>
+			<li><i>/file/sample.html</i> <br>&nbsp;Purpose--> returns the content of the file sample.html </li>
+			<br>
+			<li><i>/json</i> <br>&nbsp;Purpose--> returns a json of the /random request</a></li>
+			<br>
+			<li><i>/random</i> <br>&nbsp;Purpose--> returns index.html</a></li>
+			<br>
+			<li><i>/multiply?num1=x1&num2=x2</i> <br>&nbsp;Arguments--> x1 and x2 represents a valid integer <br>&nbsp;&nbsp;Purpose--> returns the multiplicative solution of num1 and num2</li>
+			<br>
+			<li><i>/github?query=users/amehlhase316/repos</i> <br>&nbsp;Purpose--> returns full_name and id of repos, and login of the owner of each repo</li>
+			<br>
+			<li><i>/cone?radius=x1&height=x2</i> <br>&nbsp;Arguments--> x1 and x2 represents a valid double <br>&nbsp;&nbsp;Purpose--> returns the volume of a cone based on input radius and height</li>
+			<br>
+			<li><i>/sentence?noun1=y1&noun2=y2</i> <br>&nbsp;Arguments--> y1 and y2 represents a valid word <br>&nbsp;&nbsp;Purpose--> returns a random simple sentence based on input nouns</li>
 		</ul>
 		<h3>File Structure in www (you can use /file/www/FILENAME):</h3>
 		${links}
