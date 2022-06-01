@@ -245,12 +245,12 @@ class WebServer {
             JSONArray newjSON = new JSONArray();
             String repoName;
             String ownername;
-            String repoId;
+            Integer repoId;
             for (int i = 0; i < repoArray.length(); i++) {
               JSONObject repo = repoArray.getJSONObject(i);
 
               repoName = repo.getString("full_name");
-              repoId = repo.getString("id");
+              repoId = Integer.parseInt(repo.getString("id"));
               System.out.println(repoName);
               System.out.println(repoId);
 
