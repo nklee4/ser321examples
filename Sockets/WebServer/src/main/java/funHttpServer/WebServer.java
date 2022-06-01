@@ -287,6 +287,47 @@ class WebServer {
             builder.append("\n");
             builder.append("The URL is not recognized, please type in a correct URL...");
           }
+        } else if (request.contains("cone?")) {
+          Double radius = null;
+          Double height = null;
+          Double PI = 3.14;
+          Map<String, String> query_pairs = new LinkedHashMap<String, String>();
+          // extract path parameters
+          query_pairs = splitQuery(request.replace("cone?", ""));
+
+          // extract required fields from parameters
+          try {
+            radius = Double.parseDouble(query_pairs.get("radius"));
+            height = Double.parseDouble(query_pairs.get("height"));
+            Double result = (1.0/3) * Math.PI * radius * radius * height;
+            System.out.println("Radius of the cone: " + radius);
+            System.out.println("Height of the cone: " + height);
+            System.out.println("Volume of the cone: " + result);
+            // Generate response
+            builder.append("HTTP/1.1 200 OK\n");
+            builder.append("Content-Type: text/html; charset=utf-8\n");
+            builder.append("\n");
+            builder.append("Radius of the cone: " + radius + "\n");
+            builder.append("Height of the cone: " + height + "\n");
+            builder.append("Volume of your cone is: " + result);
+          } catch (Exception e) {
+            if (radius == null && radius == null) {
+              builder.append("HTTP/1.1 405 Method Not Allowed\n");
+              builder.append("Content-Type: text/html; charset=utf-8\n");
+              builder.append("\n");
+              builder.append("Both inputs for multiplication operation are invalid, please enter an valid double for radius and height.");
+            } else if (radius == null) {
+              builder.append("HTTP/1.1 405 Method Not Allowed\n");
+              builder.append("Content-Type: text/html; charset=utf-8\n");
+              builder.append("\n");
+              builder.append("Radius is invalid, please enter a valid double.");
+            } else {
+              builder.append("HTTP/1.1 405 Method Not Allowed\n");
+              builder.append("Content-Type: text/html; charset=utf-8\n");
+              builder.append("\n");
+              builder.append("Height is invalid, please enter a valid double.");
+            }
+          }
         } else {
           // if the request is not recognized at all
 
