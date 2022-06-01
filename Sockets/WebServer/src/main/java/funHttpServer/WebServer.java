@@ -226,7 +226,6 @@ class WebServer {
               builder.append("At least one input is invalid, please enter a valid integer.");
             }
           }
-
         } else if (request.contains("github?")) {
           // pulls the query from the request and runs it with GitHub's REST API
           // check out https://docs.github.com/rest/reference/
@@ -235,54 +234,59 @@ class WebServer {
           //     then drill down to what you care about
           // "Owner's repo is named RepoName. Example: find RepoName's contributors" translates to
           //     "/repos/OWNERNAME/REPONAME/contributors"
-
           Map<String, String> query_pairs = new LinkedHashMap<String, String>();
           query_pairs = splitQuery(request.replace("github?", ""));
-          String json = fetchURL("https://api.github.com/" + query_pairs.get("query"));
-          System.out.println(json);
+          try {
+              String json = fetchURL("https://api.github.com/" + query_pairs.get("query"));
+              System.out.println(json);
 
+              builder.append("HTTP/1.1 200 OK\n");
+              builder.append("Content-Type: text/html; charset=utf-8\n");
+              builder.append("\n");
 
-          builder.append("HTTP/1.1 200 OK\n");
-          builder.append("Content-Type: text/html; charset=utf-8\n");
-          builder.append("\n");
+              // saving it as JSON array (if it sere not an array it woudl need to be a JSONObject)
+              JSONArray repoArray = new JSONArray(json);
 
-          // saving it as JSON array (if it sere not an array it woudl need to be a JSONObject)
-          JSONArray repoArray = new JSONArray(json);
+              // new JSON which we want to save later on
+              JSONArray newjSON = new JSONArray();
+              String repoName = null;
+              String ownername = null;
+              String repo_id = null;
+              for (int i = 0; i < repoArray.length(); i++) {
 
-          // new JSON which we want to save later on
-          JSONArray newjSON = new JSONArray();
-          String repoName = null;
-          String ownername = null;
-          String repo_id = null;
-          for(int i=0; i<repoArray.length(); i++){
+                // now we have a JSON object, one repo
+                JSONObject repo = repoArray.getJSONObject(i);
 
-            // now we have a JSON object, one repo
-            JSONObject repo = repoArray.getJSONObject(i);
+                // get repo name
+                repoName = repo.getString("full_name");
+                repo_id = repo.getString("node_id");
+                System.out.println(repoName);
+                System.out.println(repo_id);
+                // owner is a JSON object in the repo object, get it and save it in own variable then read the login name
+                JSONObject owner = repo.getJSONObject("owner");
+                ownername = owner.getString("login");
+                System.out.println(ownername);
+                // create a new object for the repo we want to store add the repo name and owername to it
+                JSONObject newRepo = new JSONObject();
+                newRepo.put("full_name", repoName);
+                newRepo.put("owner", ownername);
+                newRepo.put("node_id", repo_id);
+                newjSON.put(newRepo);
+                builder.append("Repo Name: " + repoName + "\n");
+                builder.append("Repo Node ID: " + repo_id + "\n");
+                builder.append("Owner Name: " + ownername + "\n");
 
-            // get repo name
-            repoName = repo.getString("full_name");
-            repo_id = repo.getString("node_id");
-            System.out.println(repoName);
-            System.out.println(repo_id);
-            // owner is a JSON object in the repo object, get it and save it in own variable then read the login name
-            JSONObject owner = repo.getJSONObject("owner");
-            ownername = owner.getString("login");
-            System.out.println(ownername);
-            // create a new object for the repo we want to store add the repo name and owername to it
-            JSONObject newRepo = new JSONObject();
-            newRepo.put("full_name",repoName);
-            newRepo.put("owner",ownername);
-            newRepo.put("node_id", repo_id);
-            newjSON.put(newRepo);
-            builder.append("Repo Name: " + repoName + "\n");
-            builder.append("Repo Node ID: " + repo_id + "\n");
-            builder.append("Owner Name: " + ownername + "\n");
+                builder.append("\n");
+              }
+            }
+          catch (Exception e) {
 
+            //error handling
+            builder.append("HTTP/1.1 404 Not Found\n");
+            builder.append("Content-Type: text/html; charset=utf-8\n");
             builder.append("\n");
+            builder.append("The URL is not recognized, please type in a correct URL...");
           }
-
-
-
         } else {
           // if the request is not recognized at all
 
