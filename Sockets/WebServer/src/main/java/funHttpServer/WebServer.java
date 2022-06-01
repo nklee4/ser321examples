@@ -215,12 +215,12 @@ class WebServer {
             // TODO: Include error handling here with a correct error code and
             // a response that makes sense
             if (num1 == null && num2 == null) {
-              builder.append("HTTP/1.1 405 OK\n");
+              builder.append("HTTP/1.1 405 Method Not Allowed\n");
               builder.append("Content-Type: text/html; charset=utf-8\n");
               builder.append("\n");
               builder.append("Both inputs for multiplication operation are invalid, please enter an valid integer for num1 and num2.");
             } else {
-              builder.append("HTTP/1.1 405 OK\n");
+              builder.append("HTTP/1.1 405 Method Not Allowed\n");
               builder.append("Content-Type: text/html; charset=utf-8\n");
               builder.append("\n");
               builder.append("At least one input is invalid, please enter a valid integer.");
