@@ -228,24 +228,19 @@ class WebServer {
           //     then drill down to what you care about
           // "Owner's repo is named RepoName. Example: find RepoName's contributors" translates to
           //     "/repos/OWNERNAME/REPONAME/contributors"
-          Map<String, String> query_pairs = new LinkedHashMap<String, String>();
-          String json = null;
           try {
+            Map<String, String> query_pairs = new LinkedHashMap<String, String>();
             query_pairs = splitQuery(request.replace("github?", ""));
 
-            json = fetchURL("https://api.github.com/" + query_pairs.get("query"));
+            String json = fetchURL("https://api.github.com/" + query_pairs.get("query"));
             System.out.println(json);
 
-            builder.append("HTTP/1.1 200 OK\n");
-            builder.append("Content-Type: text/html; charset=utf-8\n");
-            builder.append("\n");
-
             JSONArray repoArray = new JSONArray(json);
-
             JSONArray newjSON = new JSONArray();
             String repoName;
             String ownername;
             Integer repoId;
+
             for (int i = 0; i < repoArray.length(); i++) {
               JSONObject repo = repoArray.getJSONObject(i);
 
@@ -263,6 +258,10 @@ class WebServer {
               newRepo.put("owner", ownername);
               newRepo.put("id", repoId);
               newjSON.put(newRepo);
+
+              builder.append("HTTP/1.1 200 OK\n");
+              builder.append("Content-Type: text/html; charset=utf-8\n");
+              builder.append("\n");
               builder.append("Repo Name: " + repoName + "\n");
               builder.append("Repo ID: " + repoId + "\n");
               builder.append("Owner Name: " + ownername + "\n");
@@ -270,27 +269,20 @@ class WebServer {
               builder.append("\n");
             }
           } catch (Exception e) {
-            if (query_pairs.containsKey("query")){
-              builder.append("HTTP/1.1 405\n");
-              builder.append("Content-Type: text/html; charset=utf-8\n");
-              builder.append("\n");
-              builder.append("The input is wrong...");
-            } else {
-              builder.append("HTTP/1.1 404 Not Found\n");
-              builder.append("Content-Type: text/html; charset=utf-8\n");
-              builder.append("\n");
-              builder.append("The URL is not recognized, please type in a correct URL...");
-            }
+            builder.append("HTTP/1.1 404 Not Found\n");
+            builder.append("Content-Type: text/html; charset=utf-8\n");
+            builder.append("\n");
+            builder.append("The URL is not recognized, please type in a correct URL...");
           }
         } else if (request.contains("cone?")) {
           Double radius = null;
           Double height = null;
+          try {
           Map<String, String> query_pairs = new LinkedHashMap<String, String>();
           // extract path parameters
           query_pairs = splitQuery(request.replace("cone?", ""));
 
           // extract required fields from parameters
-          try {
             radius = Double.parseDouble(query_pairs.get("radius"));
             height = Double.parseDouble(query_pairs.get("height"));
             Double result = (1.0/3) * Math.PI * radius * radius * height;
@@ -305,22 +297,10 @@ class WebServer {
             builder.append("Height of the cone: " + height + "\n");
             builder.append("Volume of your cone is: " + result);
           } catch (Exception e) {
-            if (radius == null && height == null) {
-              builder.append("HTTP/1.1 405 Method Not Allowed\n");
-              builder.append("Content-Type: text/html; charset=utf-8\n");
-              builder.append("\n");
-              builder.append("Both inputs for multiplication operation are invalid, please enter an valid double for radius and height.");
-            } else if (radius == null) {
-              builder.append("HTTP/1.1 405 Method Not Allowed\n");
-              builder.append("Content-Type: text/html; charset=utf-8\n");
-              builder.append("\n");
-              builder.append("Radius is invalid, please enter a valid double.");
-            } else {
-              builder.append("HTTP/1.1 405 Method Not Allowed\n");
-              builder.append("Content-Type: text/html; charset=utf-8\n");
-              builder.append("\n");
-              builder.append("Height is invalid, please enter a valid double.");
-            }
+            builder.append("HTTP/1.1 405 Method Not Allowed\n");
+            builder.append("Content-Type: text/html; charset=utf-8\n");
+            builder.append("\n");
+            builder.append("Height is invalid, please enter a valid double.");
           }
         } else if (request.contains("sentence?")) {
           String noun1 = null;
