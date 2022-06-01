@@ -300,7 +300,7 @@ class WebServer {
             builder.append("HTTP/1.1 405 Method Not Allowed\n");
             builder.append("Content-Type: text/html; charset=utf-8\n");
             builder.append("\n");
-            builder.append("Height is invalid, please enter a valid double.");
+            builder.append("Input(s) invalid, please enter a valid double input(s)...");
           }
         } else if (request.contains("sentence?")) {
           String noun1 = null;
@@ -365,7 +365,6 @@ class WebServer {
           builder.append("\n");
           builder.append("I am not sure what you want me to do...");
         }
-
         // Output
         response = builder.toString().getBytes();
       }
@@ -373,7 +372,6 @@ class WebServer {
       e.printStackTrace();
       response = ("<html>ERROR: " + e.getMessage() + "</html>").getBytes();
     }
-
     return response;
   }
 
