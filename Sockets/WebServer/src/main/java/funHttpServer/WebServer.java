@@ -229,23 +229,27 @@ class WebServer {
           // "Owner's repo is named RepoName. Example: find RepoName's contributors" translates to
           //     "/repos/OWNERNAME/REPONAME/contributors"
           try {
-            Map<String, String> query_pairs = new LinkedHashMap<String, String>();
-            query_pairs = splitQuery(request.replace("github?", ""));
-
+          Map<String, String> query_pairs = new LinkedHashMap<String, String>();
+          query_pairs = splitQuery(request.replace("github?", ""));
             String json = fetchURL("https://api.github.com/" + query_pairs.get("query"));
-            System.out.println(json);
+//            System.out.println(json);
 
+            builder.append("HTTP/1.1 200 OK\n");
+            builder.append("Content-Type: text/html; charset=utf-8\n");
+            builder.append("\n");
+
+            // saving it as JSON array (if it sere not an array it woudl need to be a JSONObject)
             JSONArray repoArray = new JSONArray(json);
-            JSONArray newjSON = new JSONArray();
-            String repoName;
-            String ownername;
-            Integer repoId;
 
+            // new JSON which we want to save later on
+            JSONArray newjSON = new JSONArray();
+            String repoName = null;
+            String ownername = null;
+            int repoId = 0;
             for (int i = 0; i < repoArray.length(); i++) {
               JSONObject repo = repoArray.getJSONObject(i);
-
               repoName = repo.getString("full_name");
-              repoId = Integer.parseInt(repo.getString("id"));
+              repoId = repo.getInt("id");
               System.out.println(repoName);
               System.out.println(repoId);
 
@@ -258,10 +262,6 @@ class WebServer {
               newRepo.put("owner", ownername);
               newRepo.put("id", repoId);
               newjSON.put(newRepo);
-
-              builder.append("HTTP/1.1 200 OK\n");
-              builder.append("Content-Type: text/html; charset=utf-8\n");
-              builder.append("\n");
               builder.append("Repo Name: " + repoName + "\n");
               builder.append("Repo ID: " + repoId + "\n");
               builder.append("Owner Name: " + ownername + "\n");
